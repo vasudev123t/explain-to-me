@@ -28,7 +28,7 @@ export function CanvasRenderer({
 }: CanvasRendererProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
 
   // Initialize particles
   const initParticles = useCallback((count: number, width: number, height: number) => {
