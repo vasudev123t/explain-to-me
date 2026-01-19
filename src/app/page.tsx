@@ -30,11 +30,7 @@ export default function Home() {
     }
 
     setIsLoading(true);
-    const params = new URLSearchParams({
-      depth: depth.toString(),
-      length: length,
-    });
-    router.push(`/explain/${encodeURIComponent(topic)}?${params.toString()}`);
+    router.push(`/explain?topic=${encodeURIComponent(topic)}&depth=${depth}&length=${length}`);
   };
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -11,15 +11,10 @@ import { buildSystemPrompt, buildUserPrompt } from '@/lib/prompts';
 import type { ExplanationResponse, DepthLevel, ExplanationLength } from '@/types';
 import { DEPTH_LEVELS } from '@/types';
 
-interface PageProps {
-  params: Promise<{ topic: string }>;
-}
-
-export default function ExplainPage({ params }: PageProps) {
-  const resolvedParams = use(params);
-  const topic = decodeURIComponent(resolvedParams.topic);
+export default function ExplainPage() {
   const searchParams = useSearchParams();
 
+  const topic = searchParams.get('topic') || '';
   const depth = (parseInt(searchParams.get('depth') || '3') as DepthLevel) || 3;
   const length = (searchParams.get('length') as ExplanationLength) || 'medium';
 
@@ -29,6 +24,12 @@ export default function ExplainPage({ params }: PageProps) {
   const [showSettings, setShowSettings] = useState(false);
 
   const fetchExplanation = async () => {
+    if (!topic) {
+      setError('No topic specified');
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -45,7 +46,6 @@ export default function ExplainPage({ params }: PageProps) {
 
       const responseText = await callClaude(systemPrompt, userPrompt);
 
-      // Parse the JSON response
       const jsonMatch = responseText.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error('Invalid response format');
@@ -195,7 +195,7 @@ function LoadingState({ topic, depth }: { topic: string; depth: DepthLevel }) {
         />
         <h2 className="text-2xl font-bold mb-2">Generating explanation...</h2>
         <p className="text-[var(--muted-foreground)] mb-4">
-          Creating a {DEPTH_LEVELS[depth].label.toLowerCase()}-level explanation of "{topic}"
+          Creating a {DEPTH_LEVELS[depth].label.toLowerCase()}-level explanation of &quot;{topic}&quot;
         </p>
         <div className="flex justify-center gap-2">
           {[0, 1, 2].map((i) => (
