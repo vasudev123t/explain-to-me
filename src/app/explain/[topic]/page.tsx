@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { AnimationSection } from '@/components/AnimationSection';
@@ -19,7 +19,6 @@ export default function ExplainPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const topic = decodeURIComponent(resolvedParams.topic);
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const depth = (parseInt(searchParams.get('depth') || '3') as DepthLevel) || 3;
   const length = (searchParams.get('length') as ExplanationLength) || 'medium';
@@ -64,6 +63,7 @@ export default function ExplainPage({ params }: PageProps) {
 
   useEffect(() => {
     fetchExplanation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topic, depth, length]);
 
   if (isLoading) {
