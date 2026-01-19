@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -12,6 +12,25 @@ import type { ExplanationResponse, DepthLevel, ExplanationLength } from '@/types
 import { DEPTH_LEVELS } from '@/types';
 
 export default function ExplainPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <ExplainPageContent />
+    </Suspense>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-8">
+      <div className="text-center max-w-md">
+        <div className="w-16 h-16 mx-auto mb-6 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+        <h2 className="text-2xl font-bold mb-2">Loading...</h2>
+      </div>
+    </div>
+  );
+}
+
+function ExplainPageContent() {
   const searchParams = useSearchParams();
 
   const topic = searchParams.get('topic') || '';
